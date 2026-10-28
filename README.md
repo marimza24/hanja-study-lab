@@ -6,7 +6,7 @@ Laboratorio web estático para el estudio colaborativo de Hanja. La primera etap
 
 - Ficha principal de 人 y lectura en coreano y mandarín.
 - Audio de pronunciación mediante Speech Synthesis del navegador para 人 y para cada palabra coreana.
-- Las 19 palabras de la lista de trabajo: 인간, 개인, 외국인, 성인, 주인, 타인, 노인, 인구, 인물, 인형, 인생, 인류, 인재, 인력, 인원, 인사, 인격, 인권 e 인종.
+- Las 22 palabras de la lista de trabajo: 인간, 개인, 외국인, 성인, 주인, 타인, 노인, 인구, 인물, 인형, 인생, 인류, 인재, 인력, 인원, 인사, 인격, 인권, 인종, 휴가, 주소 y 작가.
 - Votación semanal de ejemplo para proponer el siguiente Hanja.
 - Reto cronometrado de 10 preguntas, con botones para comenzar, pausar, reanudar y terminar.
 - Tabla local de resultados con nombre, puntaje, aciertos, tiempo y fecha; exportación a TXT.
