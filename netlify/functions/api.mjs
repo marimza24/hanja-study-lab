@@ -2,7 +2,7 @@ const json = (body, status = 200) => Response.json(body, {
   status,
   headers: { "Cache-Control": "no-store" }
 });
-const cleanText = (value, max = 35) => String(value ?? "").replace(/[<>\\u0000-\\u001f]/g, "").trim().slice(0, max);
+const cleanText = (value, max = 35) => String(value ?? "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, max);
 const allowedOptions = new Set(["生", "學", "國", "心"]);
 
 function supabaseConfig() {
