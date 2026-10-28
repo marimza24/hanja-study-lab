@@ -28,22 +28,38 @@ section{padding:36px 0}.soft{background:#ecefe6;border-block:1px solid #e0e5d9}.
 const vocab=[
 ['인간','人間','ser humano; humanidad'],['개인','個人','individuo; persona particular'],['외국인','外國人','persona extranjera; extranjero/a'],['성인','成人','adulto/a'],['주인','主人','dueño/a; anfitrión/a, según el contexto'],['타인','他人','otra persona; alguien ajeno'],['노인','老人','persona mayor; anciano/a'],['인구','人口','población'],['인물','人物','persona; figura o personaje'],['인형','人形','muñeco/a; figura humana'],['인생','人生','vida; vida humana'],['인류','人類','humanidad; especie humana'],['인재','人才','persona talentosa; talento'],['인력','人力','mano de obra; fuerza humana'],['인원','人員','número de personas; personal'],['인사','人事','asuntos de personal; saludo, según el contexto'],['인격','人格','personalidad; carácter moral'],['인권','人權','derechos humanos'],['인종','人種','raza; grupo humano en determinadas clasificaciones'],['휴가','休暇','vacaciones; licencia'],['주소','住所','dirección; domicilio'],['작가','作家','autor/a; escritor/a']];
 const $=s=>document.querySelector(s);const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let fallbackAudio=null;
 function speak(text,lang){
- const target=lang.toLowerCase().slice(0,2);
- const online=()=>{
-  if(fallbackAudio){fallbackAudio.pause();fallbackAudio.removeAttribute('src');fallbackAudio.load()}
-  // Audio remoto de pronunciación. Se inicia directamente desde la interacción del usuario.
-  const url='https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl='+target+'&q='+encodeURIComponent(text);
-  fallbackAudio=new Audio(url);fallbackAudio.preload='none';
-  fallbackAudio.onerror=()=>{if('speechSynthesis'in window){const u=new SpeechSynthesisUtterance(text);u.lang=lang;speechSynthesis.speak(u)}else alert('No se pudo cargar el audio. Comprueba tu conexión a Internet.')};
-  const p=fallbackAudio.play();if(p&&p.catch)p.catch(()=>{if('speechSynthesis'in window){const u=new SpeechSynthesisUtterance(text);u.lang=lang;speechSynthesis.speak(u)}else alert('No se pudo reproducir el audio. Comprueba tu conexión a Internet.')});
- };
- if(!('speechSynthesis'in window)){online();return}
- const voices=speechSynthesis.getVoices();
- const v=voices.find(x=>x.lang.toLowerCase()===lang.toLowerCase())||voices.find(x=>x.lang.toLowerCase().startsWith(target));
- if(v){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=v.lang;u.voice=v;u.rate=.82;u.onerror=online;try{speechSynthesis.speak(u);return}catch{}}
- online();
+ const target=lang.toLowerCase().startsWith('ko')?'ko':(lang.toLowerCase().startsWith('zh')?'zh-CN':lang);
+ const phrase=String(text||'').trim();
+ if(!phrase)return;
+ // Try browser speech only when a voice matching the requested language is available.
+ if('speechSynthesis'in window){
+  const voices=speechSynthesis.getVoices();
+  const voice=voices.find(v=>v.lang.toLowerCase()===target.toLowerCase())||
+    voices.find(v=>v.lang.toLowerCase().startsWith(target.toLowerCase().slice(0,2)));
+  if(voice){
+   speechSynthesis.cancel();
+   const utterance=new SpeechSynthesisUtterance(phrase);
+   utterance.lang=voice.lang;utterance.voice=voice;utterance.rate=.82;
+   utterance.onerror=()=>openTranslateAudio(phrase,target);
+   speechSynthesis.speak(utterance);
+   return;
+  }
+ }
+ // Separate audio element per request prevents a previous cached clip (e.g. 人/rén)
+ // from being reused for later Korean vocabulary.
+ playGoogleAudio(phrase,target);
+}
+function openTranslateAudio(text,lang){
+ const url='https://translate.google.com/?sl=auto&tl='+encodeURIComponent(lang)+'&text='+encodeURIComponent(text)+'&op=translate';
+ window.open(url,'_blank','noopener');
+}
+function playGoogleAudio(text,lang){
+ const url='https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl='+encodeURIComponent(lang)+'&q='+encodeURIComponent(text)+'&textlen='+encodeURIComponent(text.length)+'&cache='+Date.now();
+ const audio=new Audio(url);audio.preload='none';
+ audio.onerror=()=>openTranslateAudio(text,lang);
+ const play=audio.play();
+ if(play&&typeof play.catch==='function')play.catch(()=>openTranslateAudio(text,lang));
 }
 document.querySelectorAll('[data-speak]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.speak,b.dataset.lang)));
 $('#wordGrid').innerHTML=vocab.map(([word,hanja,meaning])=>'<article class="word"><b>'+esc(word)+'</b><small>'+esc(hanja)+' · lectura coreana</small><div class="meaning">'+esc(meaning)+'</div><button class="btn soundbtn" style="margin-top:9px;width:100%" data-word="'+esc(word)+'" type="button">🔊 Escuchar coreano</button></article>').join('');
