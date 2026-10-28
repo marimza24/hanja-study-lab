@@ -1,28 +1,26 @@
 # Hanja Study Lab — 한자 함께 공부하기
 
-Sitio estático en español para el aprendizaje colaborativo de Hanja. Está separado del portfolio y de Hanori y preparado para ampliarse con cada nuevo encuentro.
+Laboratorio web estático para el estudio colaborativo de Hanja. La primera etapa se concentra únicamente en **人 (인)**; la biblioteca se ampliará a medida que avance el grupo.
 
 ## Funciones actuales
 
-- Biblioteca de varios Hanja con búsqueda por carácter, lectura, significado y palabras relacionadas.
-- Fichas expandibles con notas de estudio y etiquetas.
-- Tabla de vocabulario filtrable por palabra o por Hanja.
-- Mini reto reutilizable: selecciona un carácter y practica con palabras relacionadas.
-- Guía para encuentros colaborativos: observar, reunir vocabulario, crear ejemplos y compartir preguntas.
-- Mesa de aportes local con opción de exportar las ideas como TXT.
+- Ficha principal de 人 y lectura en coreano y mandarín.
+- Audio de pronunciación mediante Speech Synthesis del navegador para 人 y para cada palabra coreana.
+- Las 19 palabras de la lista de trabajo: 인간, 개인, 외국인, 성인, 주인, 타인, 노인, 인구, 인물, 인형, 인생, 인류, 인재, 인력, 인원, 인사, 인격, 인권 e 인종.
+- Votación semanal de ejemplo para proponer el siguiente Hanja.
+- Reto cronometrado de 10 preguntas, con botones para comenzar, pausar, reanudar y terminar.
+- Tabla local de resultados con nombre, puntaje, aciertos, tiempo y fecha; exportación a TXT.
 
-## Estructura y límites actuales
+## Límites que hay que conocer
 
-- El contenido inicial está incluido en `index.html` como datos editables. Para agregar un carácter, añade su ficha en `hanjaData`; para añadir vocabulario, añade una entrada en `words`.
-- Las definiciones en español son glosas iniciales para estudiar y deben verificarse en contexto.
-- La mesa de aportes utiliza `localStorage`: los datos quedan en el navegador y no se comparten automáticamente con otras personas. La colaboración sincronizada requiere una base de datos y configuración adicional.
-- No se extrae ni se copia automáticamente contenido de Naver. Para automatizar definiciones/traducciones, primero hay que seleccionar una API o fuente autorizada, comprobar sus licencias y proteger cualquier clave de acceso. No se deben incrustar claves secretas en el JavaScript público del sitio.
+- La votación y el marcador se guardan en `localStorage`. No se sincronizan entre distintos móviles o navegadores. Para compartir resultados y votos reales del grupo se necesita una base de datos o servicio backend.
+- El audio usa las voces disponibles en el dispositivo/navegador; no son grabaciones profesionales y puede variar la calidad o disponibilidad.
+- Las definiciones en español son glosas iniciales de estudio. Deben verificarse con diccionarios fiables y en contexto.
+- Las ilustraciones previas creadas para las fichas aún deben incorporarse como archivos de imagen. Evitar enlazar imágenes privadas o dependientes de permisos de Canva sin exportarlas primero.
+- No se extrae automáticamente contenido de Naver. Antes de integrar una fuente o API hay que verificar permisos, condiciones de uso y seguridad de claves.
 
-## Publicar en Netlify
+## Desarrollo
 
-1. Conecta este repositorio de GitHub a un sitio de Netlify.
-2. No hace falta comando de build para esta versión estática.
-3. El archivo `netlify.toml` configura `.` como directorio de publicación.
-4. Publica la rama `main`. Los cambios futuros del repositorio podrán disparar nuevos despliegues si la integración continua está activada.
+El sitio está en `index.html`, sin proceso de compilación. Netlify puede publicar directamente la raíz del repositorio. Las nuevas versiones se despliegan cuando la integración con GitHub está conectada y el sitio recibe el commit.
 
 Repositorio: https://github.com/marimza24/hanja-study-lab
