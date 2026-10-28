@@ -112,6 +112,7 @@ const gameImageByWord={
 '인력':'Habitar, residir.png',
 '인원':'Número de personas, personal.png',
 '인격':'Personalidad, carácter.png',
+'인사':'Asuntos de personal saludo.png',
 '인권':'Derechos Humanos.png',
 '인종':'Raza-grupo racial.png',
 '휴가':'Vacaciones.png',
@@ -123,7 +124,7 @@ const variantQuizWords=[
 ['주소','住所','dirección; domicilio'],
 ['작가','作家','autor/a; escritor/a']
 ];
-const quizBank=[...vocab.filter(([word])=>word!=='인사'),...variantQuizWords].map(([word,hanja,meaning])=>({word,hanja,meaning,image:gameImageByWord[word]||null}));;let order=[],idx=0,score=0,hits=0,seconds=0,timer=null,running=false,started=false,finished=false,answerLock=false,player='';const totalQuestions=quizBank.length;
+const quizBank=[...vocab,...variantQuizWords].map(([word,hanja,meaning])=>({word,hanja,meaning,image:gameImageByWord[word]||null}));;let order=[],idx=0,score=0,hits=0,seconds=0,timer=null,running=false,started=false,finished=false,answerLock=false,player='';const totalQuestions=quizBank.length;
 function timeString(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}function updateStats(){$('#clock').textContent=timeString(seconds);$('#score').textContent=score;$('#hits').textContent=hits;$('#progress').textContent=Math.min(idx,totalQuestions)+'/'+totalQuestions}
 function shuffle(a){return a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
 function startGame(){player=$('#playerName').value.trim();if(!player){$('#gameFeedback').textContent='Escribe tu nombre para guardar el resultado.';$('#playerName').focus();return}if(running)return;if(finished){resetGame()}if(!started){order=shuffle([...quizBank]);idx=0;score=0;hits=0;seconds=0;started=true;finished=false;answerLock=false;renderQuestion()}running=true;timer=setInterval(()=>{if(running){seconds++;updateStats()}},1000);$('#startBtn').textContent='▶ Reanudar';$('#pauseBtn').disabled=false;$('#finishBtn').disabled=false;$('#gameFeedback').textContent='¡A jugar! El reloj está en marcha.';updateStats()}
