@@ -96,16 +96,33 @@ renderPoll();
 const gameImageByWord={
 '인간':'Estudio acogedor y el concepto de persona.png',
 '개인':'Infografía de planificación comunitaria.png',
+'외국인':'Viajero extranjero en Seúl al atardecer.png',
+'성인':'De 人 + 成 a una adultez serena.png',
+'주인':'Tarjeta de vocabulario_ dueño de café acogedor.png',
+'타인':'Otros_ encuentro al atardecer.png',
+'노인':'Persona y espacio al atardecer.png',
+'인구':'Infografía del atardecer_ 人 + 口 = 人口.png',
+'인물':'Personajes entre bocetos y atardecer.png',
+'인형':'Taller de figuritas, grandes historias.png',
 '인생':'La vida_ historias en un mismo camino.png',
 '인류':'Personas del mundo, una humanidad.png',
 '인재':'Talento y creatividad compartidos.png',
 '인력':'人力_ Fuerza y comunidad.png',
+'인원':'Desglose de caracteres y atardecer sereno.png',
 '인사':'人事_ Encuentro y bienvenida.png',
+'인격':'Tarjeta de estudio_ autora al atardecer.png',
 '인권':'Personas y derechos en unidad.png',
 '인종':'、人种_ Personas unidas en la diversidad.png',
+'휴가':'Tarjeta de ocio al atardecer.png',
+'주소':'Infografía de 住所 en una tarde dorada.png',
 '작가':'Crear y escribir entre libros.png'
 };
-const quizBank=vocab.map(([word,hanja,meaning])=>({word,hanja,meaning,image:gameImageByWord[word]||null}));let order=[],idx=0,score=0,hits=0,seconds=0,timer=null,running=false,started=false,finished=false,answerLock=false,player='';const totalQuestions=quizBank.length;
+const variantQuizWords=[
+['휴가','休暇','vacaciones; licencia'],
+['주소','住所','dirección; domicilio'],
+['작가','作家','autor/a; escritor/a']
+];
+const quizBank=[...vocab,...variantQuizWords].map(([word,hanja,meaning])=>({word,hanja,meaning,image:gameImageByWord[word]||null}));let order=[],idx=0,score=0,hits=0,seconds=0,timer=null,running=false,started=false,finished=false,answerLock=false,player='';const totalQuestions=quizBank.length;
 function timeString(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}function updateStats(){$('#clock').textContent=timeString(seconds);$('#score').textContent=score;$('#hits').textContent=hits;$('#progress').textContent=Math.min(idx,totalQuestions)+'/'+totalQuestions}
 function shuffle(a){return a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
 function startGame(){player=$('#playerName').value.trim();if(!player){$('#gameFeedback').textContent='Escribe tu nombre para guardar el resultado.';$('#playerName').focus();return}if(running)return;if(finished){resetGame()}if(!started){order=shuffle([...quizBank]);idx=0;score=0;hits=0;seconds=0;started=true;finished=false;answerLock=false;renderQuestion()}running=true;timer=setInterval(()=>{if(running){seconds++;updateStats()}},1000);$('#startBtn').textContent='▶ Reanudar';$('#pauseBtn').disabled=false;$('#finishBtn').disabled=false;$('#gameFeedback').textContent='¡A jugar! El reloj está en marcha.';updateStats()}
