@@ -94,36 +94,36 @@ async function renderPoll(){try{const r=await fetch(apiBase+'?action=poll&week='
 $('#voteForm').addEventListener('submit',async e=>{e.preventDefault();const chosen=document.querySelector('input[name="nextHanja"]:checked');if(!chosen)return;let selectedChar=chosen.value;if(selectedChar==='OTRO'){const proposal=$('#otherHanja').value.trim();if(!proposal){$('#voteFeedback').textContent='Escribí qué Hanja querés proponer.';$('#otherHanja').focus();return}selectedChar='OTRO: '+proposal.replace(/\s+/g,' ').slice(0,40)}const button=$('#voteForm button[type="submit"]');button.disabled=true;$('#voteFeedback').textContent='Guardando voto…';try{const r=await fetch(apiBase,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'vote',week:weekKey,char:selectedChar,name:$('#voterName').value.trim(),voterId:visitorId})});const data=await r.json();if(!r.ok)throw new Error(data.error||'No se pudo guardar');$('#voteFeedback').textContent='¡Voto guardado para todo el grupo!';await renderPoll()}catch(err){$('#voteFeedback').textContent='No se pudo guardar el voto compartido. Intenta de nuevo en unos minutos.'}finally{button.disabled=false}});
 renderPoll();
 // El cuestionario reutiliza el mismo mapa de imágenes validado para las tarjetas.
+// Imágenes del cuestionario: rutas exactas de /images_game (no usar imágenes de las tarjetas).
 const gameImageByWord={
-'인간':'Estudio acogedor y el concepto de persona.png',
-'개인':'Infografía de planificación comunitaria.png',
-'외국인':'Viajero extranjero en Seúl al atardecer.png',
-'성인':'De 人 + 成 a una adultez serena.png',
-'주인':'Tarjeta de vocabulario_ dueño de café acogedor.png',
-'타인':'Otros_ encuentro al atardecer.png',
-'노인':'Persona y espacio al atardecer.png',
-'인구':'Infografía del atardecer_ 人 + 口 = 人口.png',
-'인물':'Personajes entre bocetos y atardecer.png',
-'인형':'Taller de figuritas, grandes historias.png',
-'인생':'La vida_ historias en un mismo camino.png',
-'인류':'Personas del mundo, una humanidad.png',
-'인재':'Talento y creatividad compartidos.png',
-'인력':'人力_ Fuerza y comunidad.png',
-'인원':'Desglose de caracteres y atardecer sereno.png',
-'인사':'人事_ Encuentro y bienvenida.png',
-'인격':'Tarjeta de estudio_ autora al atardecer.png',
-'인권':'Personas y derechos en unidad.png',
-'인종':'、人种_ Personas unidas en la diversidad.png',
-'휴가':'Tarjeta de ocio al atardecer.png',
-'주소':'Infografía de 住所 en una tarde dorada.png',
-'작가':'Crear y escribir entre libros.png'
+'인간':'Ser humano.png',
+'개인':'Personaje.png',
+'외국인':'Raza-grupo racial.png',
+'성인':'Adulto.png',
+'주인':'Dueño.png',
+'타인':'Otra persona, los demás.png',
+'노인':'Anciano.png',
+'인구':'Población.png',
+'인물':'Personaje.png',
+'인형':'Muñeco.png',
+'인생':'Vida, vida humana.png',
+'인류':'Humanidad.png',
+'인재':'persona talentosa; talento.png',
+'인력':'Habitar, residir.png',
+'인원':'Número de personas, personal.png',
+'인격':'Personalidad, carácter.png',
+'인권':'Derechos Humanos.png',
+'인종':'Raza-grupo racial.png',
+'휴가':'Vacaciones.png',
+'주소':'Dirección domicilio.png',
+'작가':'Autor escritor.png'
 };
 const variantQuizWords=[
 ['휴가','休暇','vacaciones; licencia'],
 ['주소','住所','dirección; domicilio'],
 ['작가','作家','autor/a; escritor/a']
 ];
-const quizBank=[...vocab,...variantQuizWords].map(([word,hanja,meaning])=>({word,hanja,meaning,image:gameImageByWord[word]||null}));let order=[],idx=0,score=0,hits=0,seconds=0,timer=null,running=false,started=false,finished=false,answerLock=false,player='';const totalQuestions=quizBank.length;
+const quizBank=[...vocab.filter(([word])=>word!=='인사'),...variantQuizWords].map(([word,hanja,meaning])=>({word,hanja,meaning,image:gameImageByWord[word]||null}));;let order=[],idx=0,score=0,hits=0,seconds=0,timer=null,running=false,started=false,finished=false,answerLock=false,player='';const totalQuestions=quizBank.length;
 function timeString(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}function updateStats(){$('#clock').textContent=timeString(seconds);$('#score').textContent=score;$('#hits').textContent=hits;$('#progress').textContent=Math.min(idx,totalQuestions)+'/'+totalQuestions}
 function shuffle(a){return a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1])}
 function startGame(){player=$('#playerName').value.trim();if(!player){$('#gameFeedback').textContent='Escribe tu nombre para guardar el resultado.';$('#playerName').focus();return}if(running)return;if(finished){resetGame()}if(!started){order=shuffle([...quizBank]);idx=0;score=0;hits=0;seconds=0;started=true;finished=false;answerLock=false;renderQuestion()}running=true;timer=setInterval(()=>{if(running){seconds++;updateStats()}},1000);$('#startBtn').textContent='▶ Reanudar';$('#pauseBtn').disabled=false;$('#finishBtn').disabled=false;$('#gameFeedback').textContent='¡A jugar! El reloj está en marcha.';updateStats()}
