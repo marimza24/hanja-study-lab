@@ -1,8 +1,0 @@
-{
-  "name": "hanja-study-lab",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "echo 'Static Hanja Study Lab'"
-  }
-}
