@@ -9,7 +9,7 @@ function supabaseConfig() {
   const url = Netlify.env.get("SUPABASE_URL");
   const key = Netlify.env.get("SUPABASE_ANON_KEY");
   if (!url || !key) throw new Error("Falta configurar Supabase en Netlify");
-  return { url: url.replace(/\\/$/, ""), key };
+  return { url: url.replace(/\/$/, ""), key };
 }
 async function dbRequest(path, options = {}) {
   const { url, key } = supabaseConfig();
@@ -47,7 +47,7 @@ export default async (request) => {
     if (request.method === "GET" && url.searchParams.get("action") === "poll") {
       const week = cleanText(url.searchParams.get("week"), 30);
       const voterId = cleanText(url.searchParams.get("voterId"), 100);
-      if (!/^\\d{4}-semana-\\d{1,2}$/.test(week)) return json({ error: "Semana inválida" }, 400);
+      if (!/^\d{4}-semana-\d{1,2}$/.test(week)) return json({ error: "Semana inválida" }, 400);
       const rows = await dbRequest("hanja_votes?select=option_char,voter_id&week_key=eq." + encodeURIComponent(week));
       const counts = {};
       for (const row of rows) counts[row.option_char] = (counts[row.option_char] || 0) + 1;
@@ -61,7 +61,7 @@ export default async (request) => {
         const char = cleanText(body.char, 2);
         const voterId = cleanText(body.voterId, 100);
         const name = cleanText(body.name, 35);
-        if (!/^\\d{4}-semana-\\d{1,2}$/.test(week) || !allowedOptions.has(char) || voterId.length < 8) {
+        if (!/^\d{4}-semana-\d{1,2}$/.test(week) || !allowedOptions.has(char) || voterId.length < 8) {
           return json({ error: "Datos de voto inválidos" }, 400);
         }
         await dbRequest("hanja_votes?on_conflict=week_key,voter_id", {
